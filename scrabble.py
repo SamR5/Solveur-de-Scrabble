@@ -7,6 +7,7 @@ import sys
 import tkinter as tk
 import string
 import searchword as sw
+import time as t
 
 class Scrabble():
     """"""
@@ -55,6 +56,7 @@ class Scrabble():
         e = self.endsWith.get().lower().replace(" ", "")
         s = self.startsWith.get().lower().replace(" ", "")
         f = self.freeLetters.get().lower().replace(" ", "")
+        f = "".join(set(f))
         # if there is at least one non ascii char (special, digit...)
         # acts like nothing is found
         if any(i not in string.ascii_lowercase for i in u + e + s + f):
@@ -75,7 +77,6 @@ class Scrabble():
         if len(wordsFound) == 0:
             wordsFound = None
         
-        f = "".join(set(f))
         found = set()
         if f is not "": # if there are some free letters on the board
             for char in f:

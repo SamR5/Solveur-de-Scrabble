@@ -19,32 +19,53 @@ with open('data_first_two', 'rb') as svg:
 with open('data_last', 'rb') as svg:
     dataLast = pk.loads(svg.read())
 
-def search(word):
-    """Return True if word is in data"""
-    return word in data[word[0]]
+def contains(word, letters, s="", e=""):
+    """
+    Return True if 'word' contains all of 'letters'.
+    With 'start' and 'end' restrictions.
+    """
+    if not word.startswith(s) or not word.endswith(e):
+        return False
+    # remove the start and end
+    if s:
+        word = word[len(s):]
+    if e:
+        word = word[:-len(e)]
+    letters = list(letters)
+    try:
+        for l in word:
+            letters.remove(l)
+    except:
+        return False
+    return True
 
 def search_letters(letters, start="", end="", listOfWords=None):
     """
-    Return words containing all permutations of 'letters'
+    Return words containing some or all 'letters'
     the data to search in can be limited with listOfWords
     and restricted with start and end.
     """
-    if len(letters) <= 1:
-        return []
     words = set()
-    maxi = len(letters)+1 if len(letters)+1 < 26 else 26
-    for i in range(2, maxi):
-        for perm in it.permutations(letters, i):
-            perm = start + "".join(perm) + end
-            # search in the words that begins by the same letter
-            if listOfWords is None:
-                if perm[:2] not in dataFirstTwo:
-                    continue
-                if perm in dataFirstTwo[perm[:2]]:
-                    words.add(perm)
-            else:
-                if perm in listOfWords:
-                    words.add(perm)
+    if len(start) == 0:
+        for pair in it.permutations(set(letters), 2):
+            pair = "".join(pair)
+            if pair not in dataFirstTwo.keys():
+                continue
+            for w in dataFirstTwo[pair]:
+                if contains(w, letters, e=end):
+                    words.add(w)
+    elif len(start) == 1:
+        for l in letters:
+            for w in dataFirst[start]:
+                if contains(w, letters, s=start, e=end):
+                    words.add(w)
+    else:
+        try:
+            for w in dataFirstTwo[start[:2]]:
+                if contains(w, letters, s=start, e=end):
+                    words.add(w)
+        except KeyError:
+            pass
     # from shorter to longer
     return sorted(words, key=len, reverse=True)
 

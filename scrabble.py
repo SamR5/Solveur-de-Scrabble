@@ -14,6 +14,7 @@ class Scrabble():
     def __init__(self, master):
         self.master = master
         self.gui()
+        self.load()
 
     def gui(self):
         """"""
@@ -49,6 +50,17 @@ class Scrabble():
 
         self.result = tk.Listbox(self.master)
         self.result.grid(row=5, columnspan=2, pady=5)
+
+        self.info = tk.StringVar()
+        self.statusBar = tk.Label(self.master, textvariable=self.info)
+        self.statusBar.grid(row=6, columnspan=2)
+
+    def load(self):
+        self.searchB["state"] = "disabled"
+        self.info.set("Loading words...")
+        sw.load_words()
+        self.searchB["state"] = "normal"
+        self.info.set("")
         
     def search(self):
         """Search for words according to user entries"""
@@ -95,6 +107,7 @@ class Scrabble():
         for ind, w in enumerate(sorted(wordsFound, key=len,
                                        reverse=True)):
             self.result.insert(ind, w)
+        self.info.set("{} words found".format(len(wordsFound)))
         
                 
                 

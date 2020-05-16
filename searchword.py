@@ -6,18 +6,17 @@
 import itertools as it
 import pickle as pk
 import string
+import data_extract
 
-# loads dictionnaries
-with open('data', 'rb') as svg: # a set with all words
-    data = pk.loads(svg.read())
-# a dict with letters as key and all words beginning by that key as value
-with open('data_first', 'rb') as svg:
-    dataFirst = pk.loads(svg.read())
-# {'aa': words beginning with aa, 'ab': words beginning with 'ab', ... 'zz': 
-with open('data_first_two', 'rb') as svg:
-    dataFirstTwo = pk.loads(svg.read())
-with open('data_last', 'rb') as svg:
-    dataLast = pk.loads(svg.read())
+
+def load_words():
+    with open("lexique.txt", 'r') as lxq:
+        words = lxq.read().split('\n')
+    global data, dataFirst, dataFirstTwo, dataLast
+    data = data_extract.filtrate(words)
+    dataFirst = data_extract.data_first(data)
+    dataFirstTwo = data_extract.data_first_two(data)
+    dataLast = data_extract.data_last(data)
 
 def contains(word, letters, s="", e=""):
     """
@@ -47,7 +46,7 @@ def search_letters(letters, start="", end="", listOfWords=None):
     """
     words = set()
     if len(start) == 0:
-        for pair in it.permutations(set(letters), 2):
+        for pair in it.permutations(letters, 2):
             pair = "".join(pair)
             if pair not in dataFirstTwo.keys():
                 continue
